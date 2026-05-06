@@ -9,9 +9,9 @@ import time
 BASE_URL_AGREEMENT = "https://dev1-mt-agreement.paas.telekom.hu"
 BASE_URL_QUOTE = "https://dev1-mt-quote-management.paas.telekom.hu"
 
-QUOTE_ID = "1000000286"  # <<< csak itt kell átírni
-MTID = "495294470"  # ÜGYFÉL
-MONOGRAM = "KT"  # monogrammod
+QUOTE_ID = " "  # <<< csak itt kell átírni
+MTID = " "  # ÜGYFÉL
+MONOGRAM = " "  # monogrammod
 
 COMMON_HEADERS = {
     "accept": "application/json",
@@ -22,7 +22,7 @@ COMMON_HEADERS = {
     "brand": "MT",
     "x-m2m-user-id": "ad",
     "Content-Type": "application/json",
-    "x-api-key": "TECH674279:922f3348-362f-492b-ad46-a21de08b91b7",
+    "x-api-key": "API_KULCS_HELYE",
     "X-Client-Version": "clientVersion123",
     "X-Client-Id": "clientId123",
 }
@@ -54,7 +54,7 @@ post_headers = {
     "brand": "MT",
     "x-m2m-user-id": "m2mUserId123",
     "Content-Type": "application/json",
-    "x-api-key": "b2b-cm:a5364499-376d-410f-bce3-60a4aaaf0745",
+    "x-api-key": "API_KULCS_HELYE",
 }
 
 post_body = {
