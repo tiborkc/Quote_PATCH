@@ -9,7 +9,7 @@ import time
 BASE_URL_AGREEMENT = "https://dev1-mt-agreement.paas.telekom.hu"
 BASE_URL_QUOTE = "https://dev1-mt-quote-management.paas.telekom.hu"
 
-QUOTE_ID = "1000000285"  # <<< csak itt kell átírni
+QUOTE_ID = "1000000286"  # <<< csak itt kell átírni
 MTID = "495294470"  # ÜGYFÉL
 MONOGRAM = "KT"  # monogrammod
 
@@ -4096,21 +4096,6 @@ post_data = post_resp.json()
 
 agreement_id = external_id
 
-patch_headers = {
-    "accept": "application/json",
-    "x-request-tracking-id": "requestTracingId123",
-    "x-request-session-id": "requestSessionId123",
-    "x-request-id": "requestId123",
-    "X-Client-Version": "clientVersion123",
-    "X-Client-Id": "clientId123",
-    "x-channel-id": "B2B",
-    "brand": "MT",
-    "x-m2m-user-id": "m2mUserId123",
-    "Content-Type": "application/json",
-    "x-api-key": "b2b-cm:a5364499-376d-410f-bce3-60a4aaaf0745",
-}
-
-
 agreement_id = external_id
 
 patch_agreement_url = f"{BASE_URL_AGREEMENT}/agreements/internal/v2/agreements/{agreement_id}?fields=status"
@@ -4126,7 +4111,7 @@ for status in statuses:
 
     print(f"PATCH status -> {status} ...")
     patch_resp = requests.patch(
-        patch_agreement_url, headers=patch_headers, json=patch_body
+        patch_agreement_url, headers=post_headers, json=patch_body
     )
 
     print(patch_resp.status_code)
@@ -4142,7 +4127,6 @@ get_resp = requests.get(get_url, headers=COMMON_HEADERS)
 print(get_resp.status_code)
 
 quote_data = get_resp.json()
-
 
 # 5. uniqueProductId beszúrás
 
