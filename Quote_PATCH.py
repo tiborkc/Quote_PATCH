@@ -3,15 +3,16 @@ from datetime import datetime
 import copy
 import time
 
+from config import (
+    BASE_URL_AGREEMENT,
+    BASE_URL_QUOTE,
+    COMMON_API_KEY,
+    POST_API_KEY,
+    MTID,
+    MONOGRAM,
+)
 
-# CONFIG
-
-BASE_URL_AGREEMENT = "https://dev1-mt-agreement.paas.telekom.hu"
-BASE_URL_QUOTE = "https://dev1-mt-quote-management.paas.telekom.hu"
-
-QUOTE_ID = "1000000286"  # <<< csak itt kell átírni
-MTID = "495294470"  # ÜGYFÉL
-MONOGRAM = "KT"  # monogrammod
+QUOTE_ID = "1000000715"
 
 COMMON_HEADERS = {
     "accept": "application/json",
@@ -22,13 +23,13 @@ COMMON_HEADERS = {
     "brand": "MT",
     "x-m2m-user-id": "ad",
     "Content-Type": "application/json",
-    "x-api-key": "TECH674279:922f3348-362f-492b-ad46-a21de08b91b7",
+    "x-api-key": COMMON_API_KEY,
     "X-Client-Version": "clientVersion123",
     "X-Client-Id": "clientId123",
 }
 
 
-# 1. externalId generálás  dátum szerint
+# 1. externalId és relatedEntityId generálás  dátum szerint
 
 
 def generate_external_id():
@@ -38,6 +39,13 @@ def generate_external_id():
 
 external_id = generate_external_id()
 
+
+def generate_related_entity_id():
+    now = datetime.now()
+    return f"HU-{MONOGRAM}-MT~{now.strftime('%Y%m%d%H%M%S')}"
+
+
+related_entity_id = generate_related_entity_id()
 
 # 2. POST (agreement)
 
@@ -54,7 +62,7 @@ post_headers = {
     "brand": "MT",
     "x-m2m-user-id": "m2mUserId123",
     "Content-Type": "application/json",
-    "x-api-key": "b2b-cm:a5364499-376d-410f-bce3-60a4aaaf0745",
+    "x-api-key": POST_API_KEY,
 }
 
 post_body = {
@@ -3941,7 +3949,7 @@ post_body = {
             "entityType": "SFAContract",
             "entityBaseType": None,
             "relationType": None,
-            "relatedEntityId": "HU-MT~1000M00000kPCegQAG",
+            "relatedEntityId": related_entity_id,
             "relatedEntityBusinessId": None,
             "relatedEntityUrl": None,
             "name": None,
@@ -4096,7 +4104,6 @@ post_data = post_resp.json()
 
 agreement_id = external_id
 
-agreement_id = external_id
 
 patch_agreement_url = f"{BASE_URL_AGREEMENT}/agreements/internal/v2/agreements/{agreement_id}?fields=status"
 
