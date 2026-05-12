@@ -12,7 +12,7 @@ from config import (
     MONOGRAM,
 )
 
-QUOTE_ID = "1000000715"
+QUOTE_ID = "1000000716"
 
 COMMON_HEADERS = {
     "accept": "application/json",
