@@ -8,7 +8,7 @@ from config import BASE_URL_QUOTE, BASE_URL_AGREEMENT, HEADERS_QUOTE, HEADERS_AG
 
 # 0. KONFIGURÁCIÓ
 
-QUOTE_ID = "1000000901"
+QUOTE_ID = "1000000912"
 
 
 # 1. SEGÉDFÜGGVÉNYEK ÉS TRANSZFORMÁCIÓS LOGIKA
@@ -258,11 +258,11 @@ def inject_unique_ids(data):
 
 
 def main():
-    print(f"--- FOLYAMAT INDÍTÁSA - QUOTE_ID: {QUOTE_ID} ---")
+    print(f"--- FOLYAMAT INDÍTÁSA - {agreement_id()} - {QUOTE_ID} ---")
 
     # LÉPÉS 1: GET QUOTE
     get_url = f"{BASE_URL_QUOTE}/quoteManagement/int/v1/quotes/{QUOTE_ID}"
-    print(f"[1/5] GET Quote lekérése: {get_url}")
+    print("[1/6] GET Quote")
     get_resp = requests.get(get_url, headers=HEADERS_QUOTE)
 
     if get_resp.status_code != 200:
@@ -272,15 +272,15 @@ def main():
         return
 
     quote_data = get_resp.json()
-    print("-> Sikeres lekérés.")
+    print("Sikeres GET.")
 
-    print("[2/5] uniqueProductId-k generálása és beszúrása...")
+    print("[2/6] uniqueProductId-k generálása és beszúrása...")
     modified_quote = inject_unique_ids(copy.deepcopy(quote_data))
 
     patch_url = (
         f"{BASE_URL_QUOTE}/quoteManagement/int/v1/quotes/{QUOTE_ID}?fields=quoteItems"
     )
-    print(f"[3/5] PATCH Quote küldése: {patch_url}")
+    print("[3/6] PATCH Quote")
     patch_resp = requests.patch(
         patch_url,
         headers=HEADERS_QUOTE,
@@ -292,24 +292,24 @@ def main():
             f"HIBA a PATCH során! Status: {patch_resp.status_code}, Response: {patch_resp.text}"
         )
         return
-    print(f"-> Sikeres PATCH. Status: {patch_resp.status_code}")
+    print("Sikeres PATCH")
 
-    print("[4/5] Frissített Quote újra-lekérése (GET)...")
+    print("[4/6] Frissített Quote újra-lekérése (GET)...")
     fresh_get_resp = requests.get(get_url, headers=HEADERS_QUOTE)
     if fresh_get_resp.status_code != 200:
         print("HIBA a frissített GET során!")
         return
     fresh_quote_data = fresh_get_resp.json()
 
-    print("[5/5] Agreement JSON transzformáció és beküldés...")
+    print("[5/6] Agreement JSON transzformáció és beküldés...")
     generated_agreement = build_agreement(fresh_quote_data)
 
     agreement_post_url = f"{BASE_URL_AGREEMENT}/agreements/internal/v1/agreements"
-    print(f"-> POST küldése az Agreement API-nak: {agreement_post_url}")
+    print("[6/6] POST Agreement")
     agreement_resp = requests.post(
         agreement_post_url, headers=HEADERS_AGREEMENT, json=generated_agreement
     )
-    print(f"Agreement POST Status Code: {agreement_resp.status_code}")
+    print(f"Sikeres POST. Status: {agreement_resp.status_code}")
 
 
 if __name__ == "__main__":
