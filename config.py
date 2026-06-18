@@ -1,29 +1,34 @@
 import os
 from dotenv import load_dotenv
 
-load_dotenv(override=True)
+load_dotenv()
 
-ENV = os.getenv(
-    "ENVIRONMENT", "dev2"
-)  # env fájlban válassz környezetet. ez a default érték, ha nincs megadva.
+BASE_URL_QUOTE = "https://dev2-mt-quote-management.paas.telekom.hu"
+BASE_URL_AGREEMENT = "https://dev2-mt-agreement.paas.telekom.hu"
 
-if ENV == "dev1":
-    BASE_URL_AGREEMENT = os.getenv("DEV1_AGREEMENT_URL")
-    BASE_URL_QUOTE = os.getenv("DEV1_QUOTE_URL")
+HEADERS_QUOTE = {
+    "x-request-session-id": "a",
+    "x-request-tracking-id": "a",
+    "x-request-id": "a",
+    "x-channel-id": "IFE",
+    "brand": "MT",
+    "x-m2m-user-id": "",
+    "x-http-method-override": "POST",
+    "x-api-key": os.getenv("QUOTE_API_KEY"),
+    "Content-Type": "application/json",
+    "accept": "application/json",
+}
 
-    COMMON_API_KEY = os.getenv("DEV1_COMMON_API_KEY")
-    POST_API_KEY = os.getenv("DEV1_POST_API_KEY")
-
-elif ENV == "dev2":
-    BASE_URL_AGREEMENT = os.getenv("DEV2_AGREEMENT_URL")
-    BASE_URL_QUOTE = os.getenv("DEV2_QUOTE_URL")
-
-    COMMON_API_KEY = os.getenv("DEV2_COMMON_API_KEY")
-    POST_API_KEY = os.getenv("DEV2_POST_API_KEY")
-
-else:
-    raise ValueError(f"Unknown environment: {ENV}")
-
-QUOTE_ID = os.getenv("QUOTE_ID")
-MTID = os.getenv("MTID")
-MONOGRAM = os.getenv("MONOGRAM")
+HEADERS_AGREEMENT = {
+    "accept": "application/json",
+    "x-request-tracking-id": "requestTracingId123",
+    "x-request-session-id": "requestSessionId123",
+    "x-request-id": "requestId123",
+    "X-Client-Version": "clientVersion123",
+    "X-Client-Id": "clientId123",
+    "x-channel-id": "B2B",
+    "brand": "MT",
+    "x-m2m-user-id": "m2mUserId123",
+    "Content-Type": "application/json",
+    "x-api-key": os.getenv("AGREEMENT_API_KEY"),
+}

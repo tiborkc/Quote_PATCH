@@ -3,42 +3,12 @@ import random
 from copy import deepcopy
 from datetime import datetime, timezone
 import requests
+from config import BASE_URL_QUOTE, BASE_URL_AGREEMENT, HEADERS_QUOTE, HEADERS_AGREEMENT
 
 
 # 0. KONFIGURÁCIÓ
 
 QUOTE_ID = "1000000901"
-
-# API Végpontok alapjai
-BASE_URL_QUOTE = "https://dev2-mt-quote-management.paas.telekom.hu"
-BASE_URL_AGREEMENT = "https://dev2-mt-agreement.paas.telekom.hu"
-
-HEADERS_QUOTE = {
-    "x-request-session-id": "a",
-    "x-request-tracking-id": "a",
-    "x-request-id": "a",
-    "x-channel-id": "IFE",
-    "brand": "MT",
-    "x-m2m-user-id": "",
-    "x-http-method-override": "POST",
-    "x-api-key": "TECH674279:922f3348-362f-492b-ad46-a21de08b91b7",
-    "Content-Type": "application/json",
-    "accept": "application/json",
-}
-
-HEADERS_AGREEMENT = {
-    "accept": "application/json",
-    "x-request-tracking-id": "requestTracingId123",
-    "x-request-session-id": "requestSessionId123",
-    "x-request-id": "requestId123",
-    "X-Client-Version": "clientVersion123",
-    "X-Client-Id": "clientId123",
-    "x-channel-id": "B2B",
-    "brand": "MT",
-    "x-m2m-user-id": "m2mUserId123",
-    "Content-Type": "application/json",
-    "x-api-key": "b2b-cm:d0466a66-4404-4179-b9da-2f245af735df",
-}
 
 
 # 1. SEGÉDFÜGGVÉNYEK ÉS TRANSZFORMÁCIÓS LOGIKA
