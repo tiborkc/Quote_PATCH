@@ -8,7 +8,7 @@ from config import BASE_URL_QUOTE, BASE_URL_AGREEMENT, HEADERS_QUOTE, HEADERS_AG
 
 # 0. KONFIGURÁCIÓ
 
-QUOTE_ID = "1000000912"
+QUOTE_ID = "1000001063"
 
 
 # 1. SEGÉDFÜGGVÉNYEK ÉS TRANSZFORMÁCIÓS LOGIKA
@@ -152,7 +152,7 @@ def build_root_related_entities(quote):
 
     opp_id = quote.get("opportunityId", "HU-MT~0069M00000YcXKQQA3")
     opp_business_id = quote.get("opportunityBusinessId", "8046456")
-    sfa_contract_id = quote.get("sfaContractId", f"HU-KT-MT~{quote_id}")
+    sfa_contract_id = quote.get("sfContractId", f"HU-KT-MT~{quote_id}")
     document_id = quote.get("documentId", "69736dc79e434841de1b14a4")
     lead_id = quote.get("iccmLeadId", "8045497")
 
@@ -167,7 +167,7 @@ def build_root_related_entities(quote):
             "relatedEntityBusinessId": opp_business_id,
             "role": "originalOpportunity",
         },
-        {"entityType": "SFAContract", "relatedEntityId": sfa_contract_id},
+        {"entityType": "SFContract", "relatedEntityId": sfa_contract_id},
         {
             "entityType": "Document",
             "relatedEntityId": document_id,
