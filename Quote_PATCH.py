@@ -3,12 +3,12 @@ import random
 from copy import deepcopy
 from datetime import datetime, timezone
 import requests
-from config import BASE_URL_QUOTE, BASE_URL_AGREEMENT, HEADERS_QUOTE, HEADERS_AGREEMENT
+from config import BASE_URL_QUOTE, BASE_URL_AGREEMENT, HEADERS_QUOTE, HEADERS_AGREEMENT, MONOGRAM, CURRENT_ENV
 
 
 # 0. KONFIGURÁCIÓ
 
-QUOTE_ID = "1000001063"
+QUOTE_ID = "1000000419"
 
 
 # 1. SEGÉDFÜGGVÉNYEK ÉS TRANSZFORMÁCIÓS LOGIKA
@@ -19,7 +19,8 @@ def utc_now_formatted():
 
 
 def agreement_id():
-    return "KT" + datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
+    
+    return MONOGRAM + datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
 
 
 def find_owner_customer(quote):
@@ -146,12 +147,20 @@ def build_related_parties(quote):
 
 def build_root_related_entities(quote):
     quote_id = quote.get("id", "UNKNOWN")
-    shopping_cart_id = quote.get(
-        "shoppingCartId", "d47951a0-273a-46f8-8169-86953d2d2dac"
-    )
+    shopping_cart_id = "d47951a0-273a-46f8-8169-86953d2d2dac"
+    opp_business_id = "8046456"
+    opp_id = "HU-MT~0069M00000YcXKQQA3"
 
-    opp_id = quote.get("opportunityId", "HU-MT~0069M00000YcXKQQA3")
-    opp_business_id = quote.get("opportunityBusinessId", "8046456")
+    #shopping cart / opportunity id / opportunity business id meghatározása quoteból
+    for entity in quote.get("relatedEntities", []):
+
+        if entity.get("entityType") == "ShoppingCart":
+            shopping_cart_id = entity.get("relatedEntityId", shopping_cart_id)
+
+        elif entity.get("entityType") == "Opportunity":
+            opp_id = entity.get("relatedEntityId", opp_id)
+            opp_business_id = entity.get("relatedEntityBusinessId", opp_business_id)
+
     sfa_contract_id = quote.get("sfContractId", f"HU-KT-MT~{quote_id}")
     document_id = quote.get("documentId", "69736dc79e434841de1b14a4")
     lead_id = quote.get("iccmLeadId", "8045497")
@@ -179,8 +188,8 @@ def build_root_related_entities(quote):
     ]
 
 
-def build_agreement(quote):
-    agr_id = agreement_id()
+def build_agreement(quote, agreement_id):
+    agr_id = agreement_id
     now_str = utc_now_formatted()
 
     owner = find_owner_customer(quote)
@@ -258,7 +267,8 @@ def inject_unique_ids(data):
 
 
 def main():
-    print(f"--- FOLYAMAT INDÍTÁSA - {agreement_id()} - {QUOTE_ID} ---")
+    my_agreement_id = agreement_id()
+    print(f"--- FOLYAMAT INDÍTÁSA - {CURRENT_ENV} - {my_agreement_id} - {QUOTE_ID} ---")
 
     # LÉPÉS 1: GET QUOTE
     get_url = f"{BASE_URL_QUOTE}/quoteManagement/int/v1/quotes/{QUOTE_ID}"
@@ -302,13 +312,19 @@ def main():
     fresh_quote_data = fresh_get_resp.json()
 
     print("[5/6] Agreement JSON transzformáció és beküldés...")
-    generated_agreement = build_agreement(fresh_quote_data)
+    generated_agreement = build_agreement(fresh_quote_data, my_agreement_id)
 
     agreement_post_url = f"{BASE_URL_AGREEMENT}/agreements/internal/v1/agreements"
     print("[6/6] POST Agreement")
     agreement_resp = requests.post(
         agreement_post_url, headers=HEADERS_AGREEMENT, json=generated_agreement
     )
+    #print(agreement_resp.text)
+    if agreement_resp.status_code != 200:
+        print(
+            f"HIBA a POST során! Status: {agreement_resp.status_code}, Response: {agreement_resp.text}"
+        )        
+        return
     print(f"Sikeres POST. Status: {agreement_resp.status_code}")
 
 
